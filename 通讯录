@@ -1,0 +1,352 @@
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <iomanip> //io����������
+#include <fstream>
+#include <windows.h>
+
+using namespace std;
+
+class book
+{
+public:
+    book(); //Ĭ�Ϲ��캯��
+    char inter_face(); //��ҳ
+    void add_person(); //������ϵ��
+    void del_person(); //ɾ����ϵ��
+    void show_all(); //��ʾ������ϵ��
+    void alter(); //�޸���Ϣ
+    void select(); //��ѯ��ϵ��
+    void save_new(); //���������ӵ���ϵ��
+private:
+    string name; //����
+    string email; //�����ʼ�
+    string qq; //QQ
+    string number; //�绰����
+    string addr; //��ַ
+};
+book::book() //Ĭ�Ϲ��캯�����������
+{
+     name;
+     email;
+     qq;
+     number;
+     addr;
+}
+void book::add_person() //������ϵ��
+{
+    cout<<"��������ϵ����Ϣ��"<<endl;
+    cout<<"������"<<endl;
+    cin>>name;
+    fflush(stdin);
+    cout<<"��ַ��"<<endl;
+    cin>>addr;
+    fflush(stdin);
+    cout<<"�绰�ţ�"<<endl;
+    cin>>number;
+    fflush(stdin);
+    cout<<"�����ʼ���"<<endl;
+    cin>>email;
+    fflush(stdin);
+    cout<<"QQ��"<<endl;
+    cin>>qq;
+    fflush(stdin);
+    save_new(); //���ñ��溯��
+    cout<<endl<<endl<<"����ϵ����Ϣ�Ѿ������!!!!!!"<<endl<<endl;
+    system("pause");
+    return;
+}
+void book::del_person() //ɾ����ϵ��
+{
+    cout<<"���ѽ���ɾ�����棺"<<endl;
+    ifstream inData("pbook.txt",ios::in); //inData�ļ�������pbook.txt�ж�ȡ�ļ����ļ������뷽ʽ���ļ�
+    ofstream outData("temp.txt",ios::out); //��temp.txt������ݣ��ļ��������ʽ���ļ�
+    if(!outData||!inData)
+    {
+        cout<<"�Բ���!!!!�Ҳ����ļ�!!!!"<<endl;
+        system("pause");
+        return;
+    }
+   string sign;
+   cout<<endl<<"������Ҫɾ�����������ֻ��ţ�";
+   cin>>sign;
+   string strl;
+       bool flag = true;
+   string str;
+   while(inData >> name >> number)
+   {
+       getline(inData,str); //��str�ķ�ʽ��ȡ�ַ���
+       if((sign==name)||(sign==number))
+       {
+           cout<<endl<<"����ɾ������ϵ�ˣ�"<<endl<<endl;
+           cout<<"strl"<<endl;
+           cout<<setiosflags(ios::left)<<setw(10)<<name<<" "<<number<<str<<endl; //�ɿ����������ʾ������
+           flag = false; //���ƿؼ�ʲôʱ����
+           break;
+       }
+       outData<<setiosflags(ios::left)<<setw(10)<<name<<" "<<number<<str<<endl;
+   }
+    if(flag)
+    {
+        cout<<endl<<"�Բ���!!!��ϵ����û��Ҫ�ҵ���!!!"<<endl<<endl;
+    }
+    else
+    {
+        while(getline(inData,str)) //����������ȡһ���ַ������ļ�ָ��ָ����һ�п�ͷ
+       {
+            outData<<str<<endl;
+       }
+      outData.close(); //�ر��ļ����Ա���������ɼ�����ȡ�ļ�
+      inData.close();
+      ofstream out("pbook.txt",ios::out);
+      ifstream in("temp.txt",ios::in);
+      if(!out||!in)
+      {
+          cout<<endl<<"�Բ����ܴ��ļ�!!!"<<endl<<endl;
+          system("pause");
+          return;
+      }
+      while(getline(in,str))
+      {
+          out<<str<<endl;
+      }
+    out.close();
+    in.close();
+    cout<<endl<<"����˵���Ϣ�Ѿ������ͨѶ¼��ɾ��!!!!"<<endl<<endl;
+   }
+    system("pause");
+    book::inter_face();
+}
+void book::show_all() //��ʾ������ϵ��
+{
+    cout<<"����ʾ����ǰ��������ϵ�ˣ�"<<endl;
+    ifstream inData("pbook.txt",ios::in);
+    if(!inData)
+    {
+        cout<<endl<<"�Բ���!!!!û���ҵ��ļ�!!!!!"<<endl;
+        system("pause");
+        return;
+    }
+    bool flag = true;
+    string record;
+    while(getline(inData,record))
+    {
+        if(flag)
+        {
+            cout<<endl<<"��ϵ���굥��"<<endl;
+            cout<<endl<<"����       ��ַ           �绰��           ��������           QQ"<<endl;
+        }
+        cout<<record<<endl;
+        flag = false;
+    }
+    if(flag)
+    {
+        cout<<endl<<"���ͨѶ¼��û����ϵ�ˣ�������"<<endl;
+    }
+    else
+    {
+        cout<<endl<<"������ϵ���Ѿ�ȫ����ʾ��������"<<endl;
+    }
+    system("pause");
+}
+void  book::select() //��ѯ��ϵ��
+{
+   ifstream inData("pbook.txt",ios::in);
+   if  (!inData)
+   {
+        cout<<endl<<"�Բ��𣡣����ļ��Ҳ���������"<<endl;
+        system ("pause");
+        return;
+   }
+    int no;
+    string sign;
+    cout <<endl<<"�������Ĳ������ͣ�";
+    cout<<endl<<"1.�������ң�";
+    cout<<endl<<"2.�������:";
+    cin>>no;
+    fflush(stdin);//�������
+    string str1;
+    bool  flag = false;
+    string  str;
+    switch(no)
+    {
+        case 1:
+            cout<<endl<<"��������Ҫ���ҵ�����:";
+            cin>>sign;
+            while(inData >> name >> number)
+                {
+                    getline(inData,str);
+                    if(name == sign)
+                        {
+                            cout<<"��Ҫ���ҵ���ϵ���ǣ�"<<endl;
+                            cout<<"����         �绰��         ��ַ        ��������              QQ��";
+                            cout<<str1<<endl;
+                            cout<<setiosflags(ios::left)<<setw(10)<<name<<number<<str<<endl;
+                            flag=true;
+                            system("pause");break;
+                        }
+                }
+        if(!flag)
+            {
+                cout<<"�����������������룡"<<endl;
+                system("pause");
+            }   break;
+        case 2:
+            cout << endl <<"��������Ҫ���ҵĺ��룺";
+            cin>>sign;
+            while (inData >> name >> number)
+                {
+                    getline(inData,str);
+                    if(number == sign)
+                        {
+                            cout <<"��Ҫ���ҵ���ϵ���ǣ�"<<endl;
+                            cout <<"����         �绰��         ��ַ        ��������               QQ��";
+                            cout <<str1 <<endl ;
+                            cout <<setiosflags(ios::left)<<setw(10)<<name<<number<<str<<endl ;
+                            flag = true;
+                            system("pause");break;
+                        }
+                }
+        if(!flag)
+            {
+                cout<<"�����������������룡"<<endl;
+                system("pause");//�밴���������....
+            }
+    }
+}
+void book::save_new() //����ϵͳ
+{
+        ofstream outData("pbook.txt",ios::app); //��ios::app�򿪣����û���ļ��������ɿ��ļ��������ڣ������ļ�β׷��
+        if(!outData)
+        {
+            cout<<endl <<"�Բ��𣡴��ļ�ʧ�ܣ���"<<endl<<endl;
+            system("pause");
+            return ;
+        }
+        outData<<setiosflags(ios::left)<<setw(10)<<name<<" "<<setw(14)<<number<<" "<<
+        setw(20)<<addr<<" "<<setw(20)<<email<<" "<<setw(11)<<qq<<endl; //setw����������
+        outData.close();
+}
+char book::inter_face()//��ҳ
+{
+    int choose;
+    //SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),FOREGROUND_INTENSITY|FOREGROUND_GREEN);
+    system("cls");
+    cout<<endl<<"\t\t**************ͨѶ¼****************"<<endl;
+    cout<<"\t\t|***      1.��������ϵ��        ***|"<<endl;
+    cout<<"\t\t|***      2.ɾ����ϵ��          ***|"<<endl;
+    cout<<"\t\t|***      3.��ʾ������ϵ��      ***|"<<endl;
+    cout<<"\t\t|***      4.�޸���Ϣ            ***|"<<endl;
+    cout<<"\t\t|***      5.��ѯ��ϵ��          ***|"<<endl;
+    cout<<"\t\t|***      6.�ر�ͨѶ¼          ***|"<<endl;
+    cout<<"\t\t************************************"<<endl;
+    cout<<"\t��ѡ�����蹦��:";
+    cin>> choose;
+    fflush(stdin);//�������
+    return choose;
+}
+void book::alter() //�޸���Ϣ
+{
+    cout<<"��ӭ�����޸���Ϣ����"<<endl;
+    ofstream outData("temp.txt",ios::out);
+    ifstream inData("pbook.txt",ios::in);
+    if(!outData||!inData)
+    {
+        cout<<endl<<"�Բ��𣡣������Ҳ����ļ�������"<<endl;
+        system("pause");
+        return;
+    }
+    string sign;
+    cout<<endl<<"��Ҫ�޸������������ֻ��ţ�";
+    cin>>sign;
+    string str1;
+    bool flag = true;
+    string str;
+    while(inData >> name >> number)
+    {
+        getline(inData,str);
+        if((sign == name)||(sign == number))
+        {
+            cout<<endl<<"�����޸ĵ���ϵ�ˣ�"<<endl<<endl;
+            cout<<str1<<endl;
+            cout<<setiosflags(ios::left)<<setw(10)<<name<<" "<<number<<str<<endl;
+            cout<<endl<<"������������ʾ�޸���Ϣ��"<<endl;
+            cout<<"������";
+            cin>>name;
+            fflush(stdin);
+            cout<<"��ַ:";
+            cin>>addr;
+            fflush(stdin);
+            cout<<"�绰�ţ�";
+            cin>>number;
+            fflush(stdin);
+            cout<<"QQ:";
+            cin>>qq;
+            fflush(stdin);
+            save_new();
+            flag = false;
+            break;
+        }
+        outData<<setiosflags(ios::left)<<setw(10)<<name<<" "<<number<<str<<endl;
+    }
+    if(flag)
+    {
+        cout<<endl<<"�Բ��𣡣�������ϵ����û���ҵ��ˣ�����"<<endl<<endl;
+    }
+    else
+    {
+        while(getline(inData,str))
+        {
+            outData<<str<<endl;
+        }
+        outData.close();
+        inData.close();
+        ofstream out("pbook.txt",ios::out);
+        ifstream in("temp.txt",ios::in);
+        if(!out||!in)
+        {
+            cout<<endl<<"�Բ��𣡣������ܴ��ļ�������"<<endl<<endl;
+            system("pause");
+            return;
+        }
+        while(getline(in,str))
+        {
+            out<<str<<endl;
+        }
+        out.close();
+        in.close();
+        cout<<endl<<"����˵���Ϣ�Ѿ������ͨѶ¼���޸ģ�����"<<endl<<endl;
+    }
+    system("pause");
+}
+int main()
+{
+    int choose;
+    book t1;
+    while (choose = t1.inter_face())
+    {
+        switch(choose)
+        {
+            case 1:
+                t1.add_person(); //������ϵ��
+                break;
+            case 2:
+                t1.del_person(); //ɾ����ϵ��
+                break;
+            case 3:
+                t1.show_all(); //��ʾ������ϵ��
+                break ;
+            case 4:
+                t1.alter(); //�޸���Ϣ
+                break ;
+            case 5:
+                t1.select(); //��ѯ��ϵ��
+                break;
+            case 6:
+                cout <<endl <<"ллʹ�ã�������"<<endl;
+                exit(0);
+
+        }
+
+     }return 0;
+}
