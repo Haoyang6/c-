@@ -1,0 +1,275 @@
+#include <iostream>
+using namespace std;
+
+class User
+{
+private:
+    int money;
+    string userName;
+    string password;
+public:
+    User();
+    ~User();
+    User(string userName, string password);
+    int saveMoney(int money);// ���
+    int getMoney(int money); // ȡ��
+    int checkMoney(); // ��ѯ���
+    string getUserName(); // ȡ���û���
+    string getPassword(); // ȡ������
+};
+
+User::User()
+{
+    money = 0;
+}
+
+User::User(string userName, string password)
+{
+    money = 0;
+    this->userName = userName;
+    this->password = password;
+}
+
+int User::saveMoney(int money)
+{
+    this->money += money;
+    return this->money;
+}
+
+int User::getMoney(int money)
+{
+    this->money -= money;
+    return this->money;
+}
+
+int User::checkMoney()
+{
+    return this->money;
+}
+
+string User::getUserName()
+{
+    return this->userName;
+}
+
+string User::getPassword()
+{
+    return this->password;
+}
+
+class DataBase
+{
+private:
+    User *users[40]; // Ĭ�����ݿ�����ܴ��40���û�
+    int userNumber; // ��ע���û�������
+public:
+    DataBase();
+    ~DataBase();
+    bool add(User *user); // �������û�
+    User * getUser(int i); // ��������ȡ���û�
+    User * getUser(string name); // �����û���ȡ���û�
+    int getUserNumber(); // ȡ�����ݿ����û�������
+};
+
+DataBase::DataBase()
+{
+    userNumber = 0;
+}
+
+DataBase::~DataBase()
+{
+    delete users;
+}
+
+bool DataBase::add(User *user)
+{
+    if(userNumber < 40 && getUser(user->getUserName()) == NULL) // �����ǰ�û��������ݿ��в�����
+        {
+            users[userNumber] = user;
+            userNumber++;
+            return true; // ����true��ʾ���û����ӳɹ�
+        }
+    return false; // ����false��ʾ���û�����ʧ��
+}
+
+User * DataBase::getUser(int i)
+{
+    if(i > 40 || i < 0) return NULL;
+    return users[i];
+}
+
+User * DataBase::getUser(string userName)
+{
+    for(int i = 0; i < userNumber; i++)
+    {
+        User *user = getUser(i);
+        if(user->getUserName() == userName) return user;
+    }
+return NULL;
+}
+
+DataBase database;
+int welcom();// ע��
+User * user_register();
+User * user_login();
+int exit();
+int user_process();
+int main()
+{
+    int state;
+    int user_state;
+    User *user;
+    do
+    {
+        state = welcom();
+        switch(state)
+        {
+            case 1:
+            user = user_register(); // �û�ע��
+            if(NULL != user)
+            {
+                cout<<"\nע��ɹ�\n";
+                do
+                {
+                    user_state = user_process();
+                    switch(user_state)
+                    {
+                        case 1:// ��Ǯ
+                        {
+                            cout<<"�����Ǯ��";
+                            int num;
+                            cin>>num;
+                            cout<<"���Ϊ��"<<user->saveMoney(num)<<endl;;
+                        }
+                        break;
+                        case 2:// ȡǮ
+                        {
+                            cout<<"����ȡǮ��";
+                            int num;
+                            cin>>num;
+                            cout<<"���Ϊ��"<<user->getMoney(num)<<endl;
+                        }
+                        break;
+                        case 3:// �鿴���
+                        {
+                            cout<<"���Ϊ��"<<user->checkMoney()<<endl;
+                        }
+                        break;
+                        case 4://����
+                        user_state = 0;
+                        default: break;
+                    }
+            } while(user_state);
+            user = NULL;
+    }
+    else cout<<"\nע��ʧ��\n";
+    break;
+    case 2:
+    user = user_login(); // �û���½
+    if(NULL != user)
+    {
+        cout<<"��½�ɹ�"<<endl;
+        do
+        {
+            user_state = user_process();
+            switch(user_state)
+            {
+                case 1:// ��Ǯ
+                {
+                    cout<<"�����Ǯ��";
+                    int num;
+                    cin>>num;
+                    cout<<"���Ϊ��"<<user->saveMoney(num)<<endl;;
+                }
+                break;
+                case 2:// ȡǮ
+                {
+                    cout<<"����ȡǮ��";
+                    int num;
+                    cin>>num;
+                    cout<<"���Ϊ��"<<user->getMoney(num)<<endl;
+                }
+                break;
+                case 3:// �鿴���
+                {
+                    cout<<"���Ϊ��"<<user->checkMoney()<<endl;
+                }
+                break;
+                case 4://����
+                user_state = 0;
+                default: break;
+            }
+        } while(user_state);
+        user = NULL;
+    }
+    else cout<<"\n��½ʧ��\n";
+    break;
+    case 3:
+    state = exit();
+    break;
+    default: break;
+            }
+        }
+    while(state);
+    return 0;
+}
+
+int welcom()// ע��
+{
+    cout<<"\t\t**********��ӭʹ��ATMϵͳ**********\n";
+    cout<<"\t\t* 1.�û�ע�� *\n";
+    cout<<"\t\t* 2.�û���¼ *\n";
+    cout<<"\t\t* 3.�˳�ϵͳ *\n";
+    cout<<"\t\t***********************************\n";
+    int num;
+    cin>>num;
+    return num;
+}
+
+User * user_register()
+{
+    string userName;
+    string password;
+    cout<<"�������˺ţ�";
+    cin>>userName;
+    if(NULL != database.getUser(userName)) // ����û�������
+    return NULL; // ע��ʧ��
+    cout<<"���������룺";
+    cin>>password;
+    User *user = new User(userName, password);
+    database.add(user);
+    return user; // ע��ɹ�
+}
+
+User * user_login()
+{
+    string userName;
+    string password;
+    cout<<"�������˺ţ�";
+    cin>>userName;
+    cout<<"���������룺";
+    cin>>password;
+    User *user = database.getUser(userName);
+    if(NULL != user) // ����û�����
+    if(user->getPassword() == password)
+    return user; // �������ƥ�����½�ɹ�
+    return NULL; // ����û�������
+}
+
+int exit()
+{
+    return 0; // �˳�ϵͳ
+}
+int user_process()
+{
+    cout<<"\t\t******************************\n";
+    cout<<"\t\t* ��ѡ��������� *\n";
+    cout<<"\t\t* 1.�� Ǯ *\n";
+    cout<<"\t\t* 2.ȡ Ǯ *\n";
+    cout<<"\t\t* 3.�� �� �� �� *\n";
+    cout<<"\t\t* 4.�� �� *\n";
+    cout<<"\t\t******************************\n";
+    int num;
+    cin>>num;
+    return num;
+}
